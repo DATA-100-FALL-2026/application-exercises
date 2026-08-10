@@ -1,0 +1,562 @@
+---
+title: "AE 01 - UN Votes"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document:
+    toc: true
+    latex_engine: xelatex
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+## Introduction
+
+How do various countries vote in the United Nations General Assembly, how have their voting patterns evolved throughout time, and how similarly or differently do they view certain issues? Answering these questions (at a high level) is the focus of this analysis.
+
+**In this application exercise, you will:**
+
+- Practice the fork-then-clone workflow
+- Load and explore data from an R package
+- Join multiple datasets together
+- Create visualizations with ggplot2
+- Use `group_by()` and `summarize()` to calculate percentages
+- Interpret trends over time
+
+**Estimated time:** 30-45 minutes
+
+---
+
+## Getting Started
+
+### Fork and Clone Workflow
+
+**IMPORTANT:** Application exercises use the same fork-then-clone workflow as labs.
+
+> 📌 **One-time setup:** You'll fork and clone this repository **once, right now, for the whole semester's worth of Application Exercises.** Starting with AE 02, you won't need to fork or clone again — you'll just pull the latest updates into the project you already have and open the new exercise folder. The detailed steps below only need your full attention this first time.
+
+**Already forked and cloned `application-exercises` before?** Skip ahead to [Returning to This Repo](#returning-to-this-repo) below — you don't need to repeat Steps 1-3.
+
+**🔑 Quick definitions**, in case any of these are new to you:
+
+- **Fork** = your own personal copy of the course repository, created under your GitHub account
+- **Clone** = downloading that copy onto JupyterHub/RStudio so you can actually edit it
+- **Remote** = the web address Git uses to know where your fork lives online
+- **YAML** = the settings block at the very top of an `.Rmd` file, between the `---` lines, that controls the title, author, and output format
+- **Knit** = the button that runs all your code and turns your `.Rmd` file into a finished HTML or PDF document
+
+**🗺️ Quick reference — the whole process at a glance:**
+
+Fork → Clone → Navigate to the exercise folder → Edit & Knit → Commit → Push
+
+The detailed version of each step is below. It looks like a lot written out, but it's mostly clicking through a wizard once.
+
+#### Step 1: Fork the Repository
+
+1. Go to the course application exercises repository on GitHub: `[CourseOrg]/application-exercises`
+2. Click the **Fork** button in the top-right corner
+3. This creates YOUR OWN copy: `YourUsername/application-exercises`
+4. You now have full permissions to push to your fork
+
+**Why fork?**
+- Creates your personal copy under your GitHub account
+- Gives you permission to push your work
+- Keeps your work separate from other students
+- Allows instructors to see your individual progress
+
+#### Step 2: Clone Your Fork to JupyterHub
+
+1. In JupyterHub, open RStudio
+2. Click **File → New Project → Version Control → Git**
+3. **Repository URL:** Paste the URL of **YOUR forked repository**
+   - Your fork: `https://github.com/YourUsername/application-exercises` ✅
+   - NOT the course repo: `https://github.com/CourseOrg/application-exercises` ❌
+4. **Project directory name:** Leave as `application-exercises`
+5. **Create project as subdirectory of:** Choose where you want it (default is fine)
+6. Click **Create Project**
+
+#### Step 3: Verify Your Setup
+
+**Check that you're in YOUR fork:**
+- Look at the **Git pane** in RStudio
+- The remote should show: `YourUsername/application-exercises`
+- If it shows the course organization name, you cloned the wrong repository!
+
+**If you cloned the course repository by mistake:**
+- Delete the project folder
+- Start over with Step 1 (Fork first!)
+
+#### Step 4: Navigate to This Exercise
+
+1. In RStudio's **Files** pane, navigate to the `ae-01-un-votes` folder
+2. Open `ae-01-un-votes.Rmd`
+3. Update the YAML with your name
+4. Click **Knit** to make sure it works
+
+#### Step 5: Commit and Push
+
+After completing the exercise (or periodically as you work):
+
+1. Click the **Git** pane
+2. Check the boxes next to changed files
+3. Click **Commit**
+4. Write a message (e.g., "Completed UN Votes exercise")
+5. Click **Commit** then **Push**
+6. Verify your work appears in **YOUR fork** on GitHub
+
+**Remember:** You're pushing to `YourUsername/application-exercises`, NOT the course repository!
+
+### Returning to This Repo
+
+*(This section is for AE 02 and beyond — for AE 01, you'll use the full Steps 1-5 above.)*
+
+Once you've forked and cloned `application-exercises` for the first time, every future Application Exercise just needs:
+
+1. Open your existing `application-exercises` project in RStudio
+2. Pull the latest changes: Git pane → **Pull**
+3. Navigate to the new exercise folder (e.g., `ae-02-...`)
+4. Open the `.Rmd` file and knit to confirm it works
+
+That's it — no forking, no re-cloning, no re-verifying the remote.
+
+---
+
+## Packages
+
+We will use the **tidyverse**, **lubridate**, and **scales** packages for data wrangling and visualization, the **DT** package for interactive display of tabular output, and the **unvotes** package for the data.
+```{r load-packages, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(lubridate)
+library(scales)
+library(DT)
+library(unvotes)
+```
+
+**What these packages do:**
+- **tidyverse:** Data wrangling (dplyr) and visualization (ggplot2)
+- **lubridate:** Working with dates and times
+- **scales:** Formatting axis labels (like percentages)
+- **DT:** Creating interactive tables
+- **unvotes:** Contains UN voting data
+
+---
+
+## Data
+
+The data we're using originally come from the **unvotes** package. In the chunk below we modify the data by joining the various data frames provided in the package to help you get started with the analysis.
+```{r join-data}
+unvotes <- un_votes %>%
+  inner_join(un_roll_calls, by = "rcid") %>%
+  inner_join(un_roll_call_issues, by = "rcid") %>%
+  mutate(date = as.Date(date))  # Convert to proper Date format
+```
+
+**What this code does:**
+- `un_votes`: Contains how each country voted on each resolution
+- `un_roll_calls`: Contains information about each resolution (date, description)
+- `un_roll_call_issues`: Contains the issue category for each resolution
+- `inner_join()`: Combines these datasets based on the resolution ID (`rcid`)
+- `mutate(date = as.Date(date))`: Converts date to proper Date format
+- Result: One dataset with votes, dates, and issue categories
+
+**Explore the data:**
+```{r explore-data}
+# View the structure
+glimpse(unvotes)
+
+# See the first few rows
+head(unvotes)
+```
+
+**Key variables:**
+- `country`: Name of the country
+- `vote`: How they voted (yes, no, abstain)
+- `date`: Date of the vote
+- `issue`: Category of the resolution (e.g., Human rights, Colonialism)
+
+---
+
+## Exercise 1: Explore the Data
+
+Before creating visualizations, let's explore the data to understand what we're working with.
+
+**Task 1.1:** How many unique countries are in the dataset?
+```{r count-countries}
+# Count unique countries
+unvotes %>%
+  distinct(country) %>%
+  nrow()
+```
+
+**Answer:** There are [type your answer here] countries in the dataset.
+
+**Task 1.2:** What are the unique vote options?
+```{r unique-votes}
+# See unique values of vote
+unvotes %>%
+  distinct(vote)
+```
+
+**Answer:** The vote options are: [type your answer here].
+
+**Task 1.3:** What issue categories are included?
+```{r unique-issues}
+# See unique issues
+unvotes %>%
+  distinct(issue)
+```
+
+**Answer:** The issue categories are: [type your answer here]
+
+---
+
+## UN Voting Patterns
+
+Now let's create a data visualization that displays how the voting record of the UK & NI changed over time on a variety of issues, and compares it to two other countries: US and Turkey.
+
+### Understanding the Code
+
+Let's break down what the code below does, step by step:
+```{r plot-yearly-yes-issue, message=FALSE, fig.width=10, fig.height=6, fig.alt="Faceted scatterplot with smoothed trend lines showing the percentage of yes votes per year for the United Kingdom, United States, and Turkey, with one panel per issue category."}
+unvotes %>%
+  # Step 1: Filter for specific countries
+  filter(country %in% c("United Kingdom", "United States", "Turkey")) %>%
+  
+  # Step 2: Extract the year from the date
+  mutate(year = year(date)) %>%
+  
+  # Step 3: Group by country, year, and issue
+  group_by(country, year, issue) %>%
+  
+  # Step 4: Calculate percentage of "yes" votes
+  summarize(percent_yes = mean(vote == "yes")) %>%
+  
+  # Step 5: Create the plot
+  ggplot(mapping = aes(x = year, y = percent_yes, color = country)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(method = "loess", se = FALSE) +
+  facet_wrap(~issue) +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "Percentage of 'Yes' votes in the UN General Assembly",
+    subtitle = "1946 to 2019",
+    y = "% Yes",
+    x = "Year",
+    color = "Country"
+  )
+```
+
+**Code explanation:**
+
+1. **filter():** Keeps only rows for UK, US, and Turkey
+2. **mutate():** Creates a new `year` variable by extracting the year from the `date`
+3. **group_by():** Groups data by country, year, and issue
+4. **summarize():** For each group, calculates the percentage of "yes" votes
+   - `mean(vote == "yes")` works because TRUE = 1 and FALSE = 0
+5. **ggplot():** Creates a scatterplot with smoothed trend lines
+   - `geom_point()`: Adds points
+   - `geom_smooth()`: Adds trend lines
+   - `facet_wrap()`: Creates separate panels for each issue
+   - `scale_y_continuous()`: Formats y-axis as percentages
+
+> 💡 **Why we added `fig.alt` to this chunk:** it gives screen-reader users a text description of the plot. When you build your own plots later in this exercise, try writing a one-sentence description of what your plot shows — it's good accessibility practice, and it's also a great way to check that you actually understand what you made.
+
+---
+
+## Exercise 2: Interpret the Visualization
+
+You can answer in full sentences or bullet points — whatever helps you organize your thinking.
+
+**Task 2.1:** Describe the overall trend for the United Kingdom on Human Rights issues.
+
+**Your answer:**
+
+[type your answer here]
+
+**Task 2.2:** Which country appears most consistent in its voting patterns across all issues? Which appears least consistent?
+
+**Your answer:**
+
+[type your answer here]
+
+**Task 2.3:** On which issue do the three countries show the most similar voting patterns? On which issue do they differ the most?
+
+**Your answer:**
+
+Most similar: [type your answer here]
+
+Most different: [type your answer here]
+
+---
+
+## Exercise 3: Modify the Countries
+
+We can easily change which countries are being plotted by changing which countries the code `filter`s for. 
+
+**Note:** The country name should be spelled and capitalized exactly the same way as it appears in the data. See the [Appendix](#appendix) for a list of the countries in the data.
+
+**Task 3.1:** Modify the code to compare three different countries of your choice.
+```{r plot-custom-countries, message=FALSE, fig.width=10, fig.height=6, eval = FALSE, fig.alt="UPDATE THIS: write a one-sentence description of what your plot shows, for screen-reader accessibility."}
+# Copy the code from above and modify the filter() line
+unvotes %>%
+  filter(country %in% c("___", "___", "___")) %>%  # Change these!
+  mutate(year = year(date)) %>%
+  group_by(country, year, issue) %>%
+  summarize(percent_yes = mean(vote == "yes")) %>%
+  ggplot(mapping = aes(x = year, y = percent_yes, color = country)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(method = "loess", se = FALSE) +
+  facet_wrap(~issue) +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "Percentage of 'Yes' votes in the UN General Assembly",
+    subtitle = "1946 to 2019",
+    y = "% Yes",
+    x = "Year",
+    color = "Country"
+  )
+```
+
+**Which countries did you choose?** [type your answer here]
+
+**Task 3.2:** Describe one interesting pattern you notice in your new plot.
+
+**Your answer:**
+
+[type your answer here]
+
+---
+
+## Exercise 4: Focus on One Issue
+
+**Task 4.1:** Create a plot that shows voting patterns for ONLY the "Human rights" issue, but includes more countries.
+
+**Hint:** You'll need to add a `filter()` step for the issue, and modify the countries in the first `filter()`.
+```{r plot-human-rights, message=FALSE, fig.width=10, fig.height=6, eval = FALSE, fig.alt="UPDATE THIS: write a one-sentence description of what your plot shows, for screen-reader accessibility."}
+unvotes %>%
+  filter(country %in% c("___", "___", "___", "___", "___")) %>%  # Choose 5 countries
+  filter(issue == "___") %>%  # Filter for Human rights
+  mutate(year = year(date)) %>%
+  group_by(country, year) %>%
+  summarize(percent_yes = mean(vote == "yes")) %>%
+  ggplot(mapping = aes(x = year, y = percent_yes, color = country)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(method = "loess", se = FALSE) +
+  scale_y_continuous(labels = percent) +
+  labs(
+    title = "___",  # Update title
+    subtitle = "1946 to 2019",
+    y = "% Yes",
+    x = "Year",
+    color = "Country"
+  )
+```
+
+**Describe what you see:**
+
+[type your answer here]
+
+---
+
+## Exercise 5: Calculate Summary Statistics
+
+**Task 5.1:** Calculate the overall percentage of "yes" votes for each country across all issues and all years.
+```{r overall-yes-percent, eval = FALSE}
+country_yes_percent <- unvotes %>%
+  group_by(___) %>%
+  summarize(
+    total_votes = n(),
+    percent_yes = mean(vote == "___") * 100
+  ) %>%
+  arrange(desc(percent_yes))
+
+# View the top 10
+head(country_yes_percent, 10)
+```
+
+**Which country has the highest overall percentage of "yes" votes?** [type your answer here]
+
+**Which has the lowest?** [type your answer here]
+
+**Task 5.2:** Calculate the percentage of "yes" votes by issue, averaged across all countries and all years.
+```{r issue-yes-percent, eval = FALSE}
+issue_yes_percent <- unvotes %>%
+  group_by(___) %>%
+  summarize(
+    percent_yes = mean(vote == "yes") * 100
+  ) %>%
+  arrange(desc(percent_yes))
+
+issue_yes_percent
+```
+
+**Which issue has the most "yes" votes on average?** [type your answer here]
+
+**Which has the least?** [type your answer here]
+
+---
+
+## Exercise 6: Challenge (Optional)
+
+You've got the core skills down at this point — this last one is here for anyone who wants to stretch further. It's meant to be genuinely challenging, so don't worry if you don't finish it or need to look things up. Partial attempts are welcome.
+
+**Task 6.1:** Create a visualization that shows how voting similarity between the US and other countries has changed over time for one specific issue.
+
+**Hints:**
+- You'll need to calculate agreement (both voted yes, or both voted no)
+- You might want to focus on a few specific countries
+- Consider using a line plot with `geom_line()`
+```{r challenge-voting-agreement, message=FALSE}
+# Your code here (this is challenging - try your best!)
+```
+
+---
+
+## Knit and Submit
+
+**Before you finish:**
+
+1. ✅ Make sure all code chunks run without errors
+2. ✅ Fill in all answer spaces
+3. ✅ Knit to HTML first (click **Knit** button)
+4. ✅ Review the HTML output
+
+**Git workflow:**
+
+1. Click the **Git** pane
+2. Check boxes next to all changed files
+3. Click **Commit**
+4. Write a commit message: "Completed AE 01 - UN Votes"
+5. Click **Commit**
+6. Click **Push**
+7. Verify your work is on GitHub in **YOUR fork**
+
+**Check GitHub:**
+- Go to `github.com/YourUsername/application-exercises`
+- Navigate to `ae-01-un-votes` folder
+- Verify you see your updated `.Rmd` file
+- You should also see the rendered `.html` file
+
+> 💬 **If only one part works:** This assignment asks for both a GitHub push and a Canvas PDF upload. If you get one working but not the other after trying the troubleshooting steps below, submit what you have by the deadline and email me — I'd rather see your progress than have you lose credit over a technical snag.
+
+---
+
+## Generate PDF for Canvas Submission
+
+Once you've verified everything works and committed your changes to GitHub:
+
+PDF generation trips people up more than the actual R code does — if it doesn't work on the first try, that's normal, not a sign you did something wrong.
+
+### Step 1: Knit to PDF
+
+1. Click the **Knit** dropdown arrow (next to the Knit button)
+2. Select **Knit to PDF**
+3. Wait for the PDF to generate (this may take a minute)
+
+**Troubleshooting PDF generation:**
+
+- **Error: "LaTeX not found"**
+  - Install tinytex in R Console: `tinytex::install_tinytex()`
+  - Restart RStudio after installation
+  - Try knitting to PDF again
+
+- **Plot doesn't fit on page**
+  - Adjust `fig.width` and `fig.height` in chunk options
+  - Or add to YAML: `geometry: margin=1in`
+
+- **Country table (Appendix) causing issues**
+  - The interactive `datatable()` might not render well in PDF
+  - This is okay - the PDF is mainly for your answers
+
+- **Still not working after trying the above?**
+  - Knit to HTML instead, then use your browser's **Print → Save as PDF** option to create a PDF from the HTML output. It won't look identical to a true LaTeX PDF, but it's a completely acceptable submission — the goal is readable answers, not a particular file format.
+
+### Step 2: Locate Your PDF
+
+After successful PDF generation:
+
+1. Look in the **Files** pane (bottom-right)
+2. Find `ae-01-un-votes.pdf` in your `ae-01-un-votes` folder
+3. Click the checkbox next to the PDF file
+4. Click **More → Export...**
+5. Save the PDF to your computer
+
+### Step 3: Submit to Canvas
+
+1. Go to Canvas
+2. Navigate to the AE 01 assignment
+3. Upload `ae-01-un-votes.pdf`
+4. Submit
+
+**Note:** You submit the PDF to Canvas AND push your work to GitHub. Both are required!
+
+---
+
+## References
+
+1.  David Robinson (2017). [unvotes](https://CRAN.R-project.org/package=unvotes): United Nations General Assembly Voting Data. R package version 0.2.0.
+2.  Erik Voeten "Data and Analyses of Voting in the UN General Assembly" Routledge Handbook of International Organization, edited by Bob Reinalda (published May 27, 2013).
+3.  Much of the analysis has been modeled on the examples presented in the [unvotes package vignette](https://cran.r-project.org/web/packages/unvotes/vignettes/unvotes.html).
+
+---
+
+## Appendix {#appendix}
+
+Below is a list of countries in the dataset:
+```{r list-countries, echo=FALSE}
+country_list <- unvotes %>% 
+  select(country) %>%
+  arrange(country) %>% 
+  distinct()
+
+# For HTML output: interactive table
+if (knitr::is_html_output()) {
+  datatable(country_list)
+} else {
+  # For PDF output: simple table
+  knitr::kable(country_list, caption = "Countries in the UN Votes Dataset")
+}
+```
+
+## Troubleshooting
+
+**Common issues:**
+
+- **"Permission denied" when pushing:** You cloned the course repo instead of your fork. Delete the project and start over with forking first!
+- **Error: "could not find function":** Make sure you ran the package loading chunk
+- **Plot doesn't show up:** Make sure you ran all the code chunks in order
+- **Country name not found:** Check the Appendix for exact spelling and capitalization
+
+**PDF-specific issues:**
+
+- **"LaTeX not found" or "pdflatex not found"**
+
+  - Install tinytex: Run `tinytex::install_tinytex()` in R Console
+  - Restart RStudio
+  - Try knitting to PDF again
+
+- **PDF generation fails**
+
+  - Try knitting to HTML first to make sure code works
+  - Check that all plots have reasonable `fig.width` and `fig.height`
+  - The interactive table in the Appendix may not render in PDF (that's okay)
+  - Still stuck? Knit to HTML and use your browser's Print → Save as PDF instead
+
+- **PDF looks different from HTML**
+
+  - This is normal - PDFs have different formatting
+  - Focus on making sure your answers and plots are clear
+
+- **Can't find the PDF file**
+
+  - Look in the same folder as your .Rmd file
+  - It should be named `ae-01-un-votes.pdf`
+  - Use the Files pane in RStudio to locate it
+
+**If you're stuck:**
+
+- Review the walkthrough video
+- Check the course discussion board
+- Ask during office hours
