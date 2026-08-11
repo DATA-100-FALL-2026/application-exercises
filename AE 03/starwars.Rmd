@@ -74,25 +74,25 @@ glimpse(starwars)
 
 **Answer the following questions:**
 
-**How many observations (rows) are there?** _____
+**How many observations (rows) are there?** [Type your answer here.]
 
-**How many variables (columns) are there?** _____
+**How many variables (columns) are there?** [Type your answer here.]
 
 **Name three numerical variables:**
 
-1. _____
-2. _____
-3. _____
+1. [Type your answer here.]
+2. [Type your answer here.]
+3. [Type your answer here.]
 
 **Name three categorical variables:**
 
-1. _____
-2. _____
-3. _____
+1. [Type your answer here.]
+2. [Type your answer here.]
+3. [Type your answer here.]
 
 **What does each observation represent?**
 
-___________________________________________________________________________
+[Type your answer here.]
 
 ---
 
@@ -107,12 +107,11 @@ ggplot(starwars,
   geom_point(color = "pink")
 ```
 
-**Task 2.1:** Run the code above. What happened to the `color = gender` mapping?
+**Task 2.1:** Run the code above (in your Console, not by knitting). What happened to the `color = gender` mapping?
 
 **Your answer:**
 
-___________________________________________________________________________
-___________________________________________________________________________
+[Type your answer here. Use as much space as you need.]
 
 **Task 2.2:** Why did this happen?
 
@@ -120,19 +119,18 @@ ___________________________________________________________________________
 
 **Your answer:**
 
-___________________________________________________________________________
-___________________________________________________________________________
+[Type your answer here. Use as much space as you need.]
 
-**The issue:** When you set `color = "pink"` inside `geom_point()`, it overrides the aesthetic mapping `color = gender` from `aes()`.
+**The issue:** When you set `color = "pink"` inside `geom_point()`, it overrides the aesthetic mapping `color = gender` from `aes()`. A fixed color set inside a `geom_*()` function always wins over a mapped color set inside `aes()` — you can't have both at once.
 
-**Task 2.3:** Modify the code below to keep all the aesthetic mappings AND make the points pink:
+**Task 2.3:** Since you can't keep the `color = gender` mapping *and* make every point pink, edit the code below to drop the conflicting mapping while keeping the other aesthetic mappings (`x`, `y`, and `size`) intact:
 ```{r scatterplot-pink}
 ggplot(starwars, 
-       aes(x = height, y = mass, size = birth_year)) +  # Removed color = gender
+       aes(x = height, y = mass, color = gender, size = birth_year)) +
   geom_point(color = "pink")
 ```
 
-**What this plot shows:**
+**What your finished plot should show:**
 
 - x-axis: Height of characters
 - y-axis: Mass (weight) of characters  
@@ -166,7 +164,7 @@ ggplot(starwars,
 
 **Your answer:**
 
-___________________________________________________________________________
+[Type your answer here.]
 
 ---
 
@@ -184,6 +182,8 @@ starwars %>%
     mean_height = mean(height, na.rm = TRUE)
   )
 ```
+
+**Note:** This example explores `height`. If you pick a different variable (like `mass` or `birth_year`) for your histogram below, swap it into the code above too and rename the summary columns to match (e.g., `min_mass`, `max_mass`, `mean_mass`), so your exploration actually matches what you're plotting.
 
 **Now create your histogram:**
 ```{r histogram, eval = FALSE}
@@ -207,15 +207,13 @@ ggplot(starwars, aes(x = ___)) +
 
 **Your answer:**
 
-I chose a binwidth of _____ because ______________________________________
-___________________________________________________________________________
+[Type your answer here. Include the binwidth you chose and your reasoning.]
 
 **Task 4.2:** Describe the distribution. Is it symmetric, skewed left, or skewed right? Are there any outliers?
 
 **Your answer:**
 
-___________________________________________________________________________
-___________________________________________________________________________
+[Type your answer here. Use as much space as you need.]
 
 ---
 
@@ -249,9 +247,7 @@ ggplot(starwars, aes(x = ___, y = ___)) +
 
 What does this visualization tell you about the relationship between these two variables?
 
-___________________________________________________________________________
-___________________________________________________________________________
-___________________________________________________________________________
+[Type your answer here. Use as much space as you need.]
 
 ---
 
@@ -266,7 +262,7 @@ Pick a single categorical variable from the dataset and make a bar plot of its d
 - species
 - eye_color
 - hair_color
-```{r barplot,, eval = FALSE}
+```{r barplot, eval = FALSE}
 # Your code here
 ggplot(starwars, aes(x = ___)) +
   geom_bar(fill = "coral") +
@@ -279,7 +275,7 @@ ggplot(starwars, aes(x = ___)) +
 
 **Task 6.1:** Which category has the most observations?
 
-**Your answer:** _____
+**Your answer:** [Type your answer here.]
 
 **Task 6.2:** If your plot has many categories with small bars that are hard to read, try flipping the coordinates:
 ```{r barplot-flipped, eval = FALSE}
@@ -343,9 +339,7 @@ ggplot(starwars, aes(x = ___, fill = ___)) +
 
 What does this visualization tell you about the relationship between these two variables?
 
-___________________________________________________________________________
-___________________________________________________________________________
-___________________________________________________________________________
+[Type your answer here. Use as much space as you need.]
 
 ---
 
@@ -390,10 +384,7 @@ ggplot(starwars_filtered,
 
 What patterns do you notice? How do the relationships differ across the facets?
 
-___________________________________________________________________________
-___________________________________________________________________________
-___________________________________________________________________________
-___________________________________________________________________________
+[Type your answer here. Use as much space as you need.]
 
 ---
 
@@ -403,21 +394,19 @@ ___________________________________________________________________________
 
 **Your answer:**
 
-___________________________________________________________________________
-___________________________________________________________________________
+[Type your answer here. Use as much space as you need.]
 
 **Task 9.2:** What was the most interesting pattern or relationship you found?
 
 **Your answer:**
 
-___________________________________________________________________________
-___________________________________________________________________________
+[Type your answer here. Use as much space as you need.]
 
 **Task 9.3:** What did you find most challenging about creating these visualizations?
 
 **Your answer:**
 
-___________________________________________________________________________
+[Type your answer here.]
 
 ---
 
@@ -453,7 +442,7 @@ Once everything works in HTML:
 5. Export and save to your computer
 6. Submit the PDF to Canvas
 
-**Remember:** Submit to BOTH GitHub (your .Rmd) AND Canvas (the PDF)!
+**Remember:** Submit to BOTH GitHub (your .Rmd) AND Canvas (the PDF). Grading is based on the PDF, so double-check it before submitting — but your GitHub repo should be up to date too.
 
 ---
 
