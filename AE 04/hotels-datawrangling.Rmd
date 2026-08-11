@@ -107,7 +107,7 @@ Are people traveling on a whim? Let's see...
 
 Fill in the blanks for filtering for hotel bookings where the guest is **not** from the US (`country` code `"USA"`) and the `lead_time` is less than 1 day.
 ```{r travel-whim, eval = FALSE}
-#don't forget to switch eval = FALSE to TRUE after filling in the blanks
+# don't forget to switch eval = FALSE to TRUE after filling in the blanks
 hotels %>%
   filter(
     country ___ "USA",      # != means "not equal to"
@@ -138,14 +138,11 @@ ___________________________________________________________________________
 
 How many bookings involve at least 1 child **or** baby?
 
-Fill in the blanks:
-
-- Replace `[AT LEAST]` with the logical operator for "at least" (in two places)
-- Replace `[OR]` with the logical operator for "or"
+Fill in the blanks below (remember to switch `eval = FALSE` to `eval = TRUE` once you're done):
 ```{r some-children, eval = FALSE}
 hotels %>%
   filter(
-    children [AT LEAST] 1 [OR] babies [AT LEAST] 1
+    children ___ 1 ___ babies ___ 1
   )
 ```
 
@@ -172,8 +169,9 @@ Do you think it's more likely to find bookings with children or babies in city h
 
 **Your prediction:** I think ___________ hotels will have more bookings with children/babies because ________________________________________________
 
-**Task 4.2:** Filter for resort hotel bookings with more than 1 child **or** baby.
+**Task 4.2:** Filter for resort hotel bookings with at least 1 child **or** baby.
 ```{r resort-children, eval = FALSE}
+# don't forget to switch eval = FALSE to TRUE after filling in the blanks
 # Filter for resort hotels with children or babies
 hotels %>%
   filter(
@@ -185,7 +183,8 @@ hotels %>%
 **Number of resort hotel bookings with children/babies:** _____
 
 **Task 4.3:** Now do the same for city hotels.
-```{r city-children,eval=FALSE}
+```{r city-children, eval = FALSE}
+# don't forget to switch eval = FALSE to TRUE after filling in the blanks
 # Filter for city hotels with children or babies
 hotels %>%
   filter(
@@ -211,17 +210,17 @@ Create a frequency table of the number of `adults` in a booking. Display the res
 
 **What is the most common number of adults in bookings in this dataset? Are there any surprising results?**
 ```{r adults-frequency, eval = FALSE}
+# don't forget to switch eval = FALSE to TRUE after filling in the blanks
 # Create frequency table
 hotels %>%
-  count(___, sort = ___) %>%    # Count adults, sort in descending order
-  arrange(desc(___))             # Arrange by count (n) in descending order
+  count(___, sort = ___)         # Count adults, sort in descending order
 ```
 
 **Hints:**
 
 - `count(variable)`: Creates a frequency table
 - `sort = TRUE`: Automatically sorts by count in descending order
-- Or use `arrange(desc(n))` to sort manually
+- Alternatively, you could use `count(variable) %>% arrange(desc(n))` — both approaches give you the same sorted result, so you only need one
 
 **Task 5.1:** What is the most common number of adults?
 
@@ -244,6 +243,7 @@ Repeat Exercise 5, once for canceled bookings (`is_canceled` coded as 1) and onc
 
 **Task 6.1:** Frequency table for CANCELED bookings.
 ```{r canceled-adults, eval = FALSE}
+# don't forget to switch eval = FALSE to TRUE after filling in the blanks
 # Filter for canceled bookings, then count adults
 hotels %>%
   filter(is_canceled == ___) %>%
@@ -252,6 +252,7 @@ hotels %>%
 
 **Task 6.2:** Frequency table for NOT CANCELED bookings.
 ```{r not-canceled-adults, eval = FALSE}
+# don't forget to switch eval = FALSE to TRUE after filling in the blanks
 # Filter for not canceled bookings, then count adults
 hotels %>%
   filter(is_canceled == ___) %>%
@@ -272,6 +273,7 @@ ___________________________________________________________________________
 
 Calculate minimum, mean, median, and maximum average daily rate (`adr`) grouped by `hotel` type so that you can get these statistics separately for resort and city hotels. Which type of hotel is higher, on average?
 ```{r hotel-adr-summary, eval = FALSE}
+# don't forget to switch eval = FALSE to TRUE after filling in the blanks
 hotels %>%
   group_by(___) %>%
   summarise(
@@ -322,6 +324,7 @@ We observe two unusual values in the summary statistics above -- a negative mini
 
 **Task 8.1:** Investigate the negative ADR value.
 ```{r negative-adr, eval = FALSE}
+# don't forget to switch eval = FALSE to TRUE after filling in the blanks
 # Filter for negative adr and select relevant columns
 hotels %>%
   filter(adr ___ ___) %>%                           # adr less than 0
@@ -351,6 +354,7 @@ ___________________________________________________________________________
 
 First, determine what the maximum is from Exercise 7, then filter for it.
 ```{r high-adr, eval = FALSE}
+# don't forget to switch eval = FALSE to TRUE after filling in the blanks
 # Filter for the maximum adr you found in Exercise 7
 hotels %>%
   filter(adr == ___) %>%                            # Use the max value you found
@@ -391,6 +395,7 @@ ___________________________________________________________________________
 
 **Task 9.1:** Create a new variable called `total_guests` that sums `adults`, `children`, and `babies`. Then calculate the average number of total guests by hotel type.
 ```{r total-guests, eval = FALSE}
+# don't forget to switch eval = FALSE to TRUE after filling in the blanks
 # Your code here
 hotels %>%
   mutate(total_guests = ___ + ___ + ___) %>%
@@ -438,7 +443,7 @@ ___________________________________________________________________________
 3. ✅ Knit to HTML first to verify everything works
 4. ✅ Review the HTML output
 
-**Git workflow:**
+### Git Workflow
 
 1. Click the **Git** pane
 2. Check boxes next to all changed files
@@ -448,9 +453,7 @@ ___________________________________________________________________________
 6. Click **Push**
 7. Verify your work is on GitHub in **YOUR fork**
 
----
-
-## Generate PDF for Canvas Submission
+### Generate PDF for Canvas Submission
 
 Once everything works in HTML:
 
@@ -461,7 +464,7 @@ Once everything works in HTML:
 5. Export and save to your computer
 6. Submit the PDF to Canvas
 
-**Remember:** Submit to BOTH GitHub (your .Rmd) AND Canvas (the PDF)!
+**Remember:** Push your `.Rmd` to GitHub (your checkpoint/backup) AND submit the PDF to Canvas. **The PDF is the basis for grading** — make sure it's complete and readable before you submit.
 
 ---
 
