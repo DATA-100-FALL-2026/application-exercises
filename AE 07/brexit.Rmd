@@ -1,5 +1,5 @@
 ---
-title: "AE 06 - Brexit - Telling Different Stories with Data"
+title: "AE 07 - Brexit - Telling Different Stories with Data"
 author: "Your Name"
 date: "`r Sys.Date()`"
 output: 
@@ -42,8 +42,8 @@ In this application exercise, you'll explore how the same data can tell differen
 
 **Quick reminder:** Work in YOUR forked `application-exercises` repository.
 
-1. Navigate to the `ae-06-brexit` folder in YOUR fork
-2. Open `ae-06-brexit.Rmd`
+1. Navigate to the `ae-07-brexit` folder in YOUR fork
+2. Open `ae-07-brexit.Rmd`
 3. Verify the `data` folder exists with `brexit.csv`
 4. Update the YAML with your name
 5. Knit to verify it works
@@ -57,6 +57,7 @@ library(scales)  # For formatting axis labels (we'll use this in Exercise 2)
 ```
 
 **What these packages do:**
+
 - **tidyverse:** Data wrangling and visualization
 - **scales:** Formatting numbers, percentages, and dates on plots
 
@@ -131,7 +132,7 @@ brexit <- brexit %>%
 - Backticks `` `Rest of South` ``: Used for names with spaces
 
 **Now create the original plot:**
-```{r original-plot, fig.width=10, fig.height=4}
+```{r original-plot, fig.width=10, fig.height=4, fig.alt="Faceted bar chart of Brexit opinion counts by region, using the same x-axis scale across all facets."}
 ggplot(brexit, aes(y = opinion, fill = opinion)) +
   geom_bar() +
   facet_wrap(~region, nrow = 1, labeller = label_wrap_gen(width = 12)) +
@@ -162,7 +163,7 @@ ggplot(brexit, aes(y = opinion, fill = opinion)) +
 ## Exercise 1: Free Scales
 
 Add `scales = "free_x"` as an argument to the `facet_wrap()` function. How does the visualisation change? How is the story this visualisation telling different than the story the original plot tells?
-```{r free-scales, eval=FALSE, fig.width=10, fig.height=4}
+```{r free-scales, eval=FALSE, fig.width=10, fig.height=4, fig.alt="Faceted bar chart of Brexit opinion counts by region, with each facet using its own independent x-axis scale."}
 # Remember to change eval=FALSE to eval=TRUE!
 
 ggplot(brexit, aes(y = opinion, fill = opinion)) +
@@ -249,7 +250,7 @@ brexit_prop
 - Each region's proportions sum to 1 (100%)
 
 **Task 2.2:** Plot the proportions with improved axis labeling.
-```{r plot-proportions, eval=FALSE, fig.width=10, fig.height=4}
+```{r plot-proportions, eval=FALSE, fig.width=10, fig.height=4, fig.alt="Faceted bar chart of Brexit opinion proportions by region, with x-axis labeled as percentages."}
 # Remember to change eval=FALSE to eval=TRUE!
 
 ggplot(brexit_prop, aes(y = opinion, x = ___, fill = opinion)) +
@@ -298,7 +299,7 @@ Recreate the same visualisation from the previous exercise, this time dodging th
 **How is the story this visualisation telling different than the story the previous plot tells?**
 
 **Task 3.1:** Create a dodged bar plot.
-```{r dodged-bars, eval=FALSE, fig.width=8, fig.height=5}
+```{r dodged-bars, eval=FALSE, fig.width=8, fig.height=5, fig.alt="Grouped bar chart with regions on the x-axis and side-by-side bars showing opinion proportions within each region."}
 # Remember to change eval=FALSE to eval=TRUE!
 
 ggplot(brexit_prop, aes(x = ___, y = ___, fill = ___)) +
@@ -405,7 +406,7 @@ brexit_prop %>%
 1. Click the **Git** pane
 2. Check boxes next to all changed files
 3. Click **Commit**
-4. Write message: "Completed AE 06 - Brexit"
+4. Write message: "Completed AE 07 - Brexit"
 5. Click **Commit** then **Push**
 
 ---
@@ -414,7 +415,7 @@ brexit_prop %>%
 
 1. Click **Knit** dropdown arrow
 2. Select **Knit to PDF**
-3. Find `brexit.pdf` in Files pane
+3. Find `ae-07-brexit.pdf` in Files pane
 4. Export and save to your computer
 5. Submit to Canvas
 
