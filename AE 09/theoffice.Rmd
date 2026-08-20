@@ -1,5 +1,5 @@
 ---
-title: "AE 08 - The Office - Predicting IMDB Ratings"
+title: "AE 09 - The Office - Predicting IMDB Ratings"
 author: "Your Name"
 date: "`r Sys.Date()`"
 output: 
@@ -42,8 +42,8 @@ In this application exercise, you'll build a predictive model for IMDB ratings o
 
 **Quick reminder:** Work in YOUR forked `application-exercises` repository.
 
-1. Navigate to the `ae-08-office` folder in YOUR fork
-2. Open `ae-08-office.Rmd`
+1. Navigate to the `ae-09-office` folder in YOUR fork
+2. Open `ae-09-office.Rmd`
 3. Update the YAML with your name
 4. Knit to verify it works
 
@@ -223,6 +223,8 @@ Put together a modeling dataset that includes features you've engineered. Also a
 
 **Note:** Michael Scott left the show at the end of Season 7.
 
+**A note on the `michael` indicator:** `season <= 7` is a simplification, not an exact rule — Michael Scott actually leaves partway through season 7 (not at a season boundary) and briefly reappears in the season 9 finale. As you build this variable, think about what this approximation gets right, what it might get wrong, and whether a more precise version would change your results later on.
+
 **Task 3.1:** Get one row per episode with all features.
 ```{r office-df, eval=FALSE}
 # Remember to change eval=FALSE to eval=TRUE!
@@ -275,6 +277,12 @@ office_df %>%
 **How many episodes are in the dataset?** _____
 
 **Do seasons 1-7 have michael = 1?** _____
+
+**Task 3.3:** Revisit the note above about `season <= 7` as a stand-in for Michael's presence. Name one specific episode or situation where this indicator would be wrong, and briefly explain why.
+
+**Your answer:**
+
+___________________________________________________________________________
 
 ---
 
@@ -392,6 +400,8 @@ tidy(___)
 
 **Hint:** Fit to `office_train`
 
+**Hint for interpreting your coefficients:** In the `tidy()` output, the `estimate` column's *sign* tells you direction — positive means the rating goes up as the predictor increases (or the group is coded 1), negative means it goes down. The *size* of the estimate tells you how much, in the original units of `imdb_rating` (points on the rating scale). Read the sign first, then the magnitude.
+
 **Task 8.1:** What is the coefficient for `michael`?
 
 **Your answer:** _____
@@ -413,6 +423,8 @@ For every 1 unit increase in the proportion of lines spoken by Jim, the IMDB rat
 ## Exercise 9: Cross-Validation
 
 Perform 5-fold cross validation and view model performance metrics.
+
+**Why this matters:** A single train/test split gives you one RMSE estimate, and that estimate depends partly on which episodes happened to land in your test set. Cross-validation refits your model across 5 different folds and averages the results, giving you a more stable estimate of how well your model generalizes — and a sense of how much that estimate might vary. Keep this in mind for Exercise 10, where you'll compare a single test-set RMSE across two models.
 ```{r cv, message=FALSE, eval=FALSE}
 # Remember to change eval=FALSE to eval=TRUE!
 
@@ -457,6 +469,8 @@ ___________________________________________________________________________
 ## Exercise 10: Compare Models
 
 Use your model to make predictions for the testing data and calculate the RMSE. Also use the model developed in the cross validation lesson to make predictions for the testing data and calculate the RMSE as well. Which model did a better job in predicting IMDB scores for the testing data?
+
+**Reminder — what is the "Old Model"?** It's the model from the cross-validation lesson, and it uses a different (simpler) set of features than the one you just built: `season`, `episode`, `total_votes`, and `air_date` (converted into a month indicator), with no dialogue-based features at all — no `michael`, `jim_pct`, or holiday indicators. As you compare the two models below, keep that feature difference in mind: it's the main thing that could explain why one outperforms the other.
 
 ### New Model
 ```{r new-model, message=FALSE, eval=FALSE}
@@ -596,7 +610,7 @@ ___________________________________________________________________________
 1. Click the **Git** pane
 2. Check boxes next to all changed files
 3. Click **Commit**
-4. Write message: "Completed AE 08 - The Office"
+4. Write message: "Completed AE 09 - The Office"
 5. Click **Commit** then **Push**
 
 ---
@@ -605,7 +619,7 @@ ___________________________________________________________________________
 
 1. Click **Knit** dropdown arrow
 2. Select **Knit to PDF**
-3. Find `ae-08-office.pdf` in Files pane
+3. Find `ae-09-office.pdf` in Files pane
 4. Export and save to your computer
 5. Submit to Canvas
 
